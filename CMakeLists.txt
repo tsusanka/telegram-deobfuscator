@@ -5,9 +5,29 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES
         unobfuscate.cpp decrypt.cpp helpers.cpp
-        tgnet)
+        tgnet/ApiScheme.cpp
+        tgnet/BuffersStorage.cpp
+        tgnet/ByteArray.cpp
+        tgnet/ByteStream.cpp
+        tgnet/Config.cpp
+        tgnet/Connection.cpp
+        tgnet/ConnectionSession.cpp
+        tgnet/ConnectionsManager.cpp
+        tgnet/ConnectionSocket.cpp
+        tgnet/Datacenter.cpp
+        tgnet/EventObject.cpp
+        tgnet/FileLoadOperation.cpp
+        tgnet/FileLog.cpp
+        tgnet/MTProtoScheme.cpp
+        tgnet/NativeByteBuffer.cpp
+        tgnet/Request.cpp
+        tgnet/Timer.cpp
+        tgnet/TLObject.cpp
+    )
 
-#include_directories(/usr/include/openssl/)
-link_libraries(crypto)
+
+include_directories(tgnet)
+
+link_libraries(crypto pthread z)
 
 add_executable(c ${SOURCE_FILES})
