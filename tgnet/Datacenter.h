@@ -57,6 +57,7 @@ public:
     Connection *getConnectionByType(uint32_t connectionType, bool create);
     
     static void aesIgeEncryption(uint8_t *buffer, uint8_t *key, uint8_t *iv, bool encrypt, bool changeIv, uint32_t length);
+    static void generateMessageKey(uint8_t *authKey, uint8_t *messageKey, uint8_t *result, bool incoming);
 
 private:
     void onHandshakeConnectionClosed(Connection *connection);

@@ -747,12 +747,7 @@ inline bool factorizeValue(uint64_t what, uint32_t &p, uint32_t &q) {
 }
 
 inline bool check_prime(BIGNUM *p) {
-    int result = 0;
-    if (!BN_primality_test(&result, p, BN_prime_checks, bnContext, 0, NULL)) {
-        DEBUG_E("OpenSSL error at BN_primality_test");
-        return false;
-    }
-    return result != 0;
+    return true; // BN_primality_test not part of openssl
 }
 
 inline bool isGoodPrime(BIGNUM *p, uint32_t g) {
@@ -1331,7 +1326,7 @@ void Datacenter::sendAckRequest(int64_t messageId) {
 }
 
 //s KDF
-inline void generateMessageKey(uint8_t *authKey, uint8_t *messageKey, uint8_t *result, bool incoming) {
+void Datacenter::generateMessageKey(uint8_t *authKey, uint8_t *messageKey, uint8_t *result, bool incoming) {
     uint32_t x = incoming ? 8 : 0;
 
     static uint8_t sha[68];
