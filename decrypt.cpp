@@ -28,25 +28,27 @@ void decrypt(unsigned char *data, uint32_t length)
 			0x2c, 0x78, 0xf6, 0xaa, 0x3d, 0x31, 0xcd, 0x31, 0x13, 0x6e, 0xaa, 0xbc, 0xc1, 0x61, 0x15, 0x86, 0x23, 0xea,
 			0x6f, 0xa1, 0xc5, 0x55
 	};
-	printf("ige len: %d\n", length - 24);
+	DEBUG_PRINT(("ige len: %d\n", length - 24));
 
 	static uint8_t key[64];
 	Datacenter::generateMessageKey(authKey, data + 8, key, false);
 	Datacenter::aesIgeEncryption(data + 24, key, key + 32, false, false, length - 24);
 
-	printf("ige decrypted:\n");
-	printHex(data + 24, length - 24);
+	DEBUG_PRINT(("ige decrypted:\n"));
+	if (DEBUG) printHex(data + 24, length - 24);
 
-	printf("\tsalt:\n");
-	printHex(data + 24, 8);
-	printf("\tsession:\n");
-	printHex(data + 24 + 8, 8);
-	printf("\tid:\n");
-	printHex(data + 24 + 16, 8);
-	printf("\tmsg_seq:\n");
-	printHex(data + 24 + 24, 4);
-	printf("\tmsg_size:\n");
-	printHex(data + 24 + 28, 4);
+	if (DEBUG) {
+		printf("\tsalt:\n");
+		printHex(data + 24, 8);
+		printf("\tsession:\n");
+		printHex(data + 24 + 8, 8);
+		printf("\tid:\n");
+		printHex(data + 24 + 16, 8);
+		printf("\tmsg_seq:\n");
+		printHex(data + 24 + 24, 4);
+		printf("\tmsg_size:\n");
+		printHex(data + 24 + 28, 4);
+	}
 	printf("\tmsg:\n");
 	printHex(data + 24 + 32, length - 24 - 32);
 	printAscii(data + 24 + 32, length - 24 - 32);

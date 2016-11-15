@@ -65,15 +65,15 @@ bool Unobfuscator::readData(FILE *file)
 
 	AES_ctr128_encrypt(dataLength, dataLength, 1, &encryptKey, iv, encryptCount, &encryptNum);
 	realLength = (uint8_t) (*dataLength * 4);
-	printf("data len: %d\n", realLength);
+	DEBUG_PRINT(("data len: %d\n", realLength));
 
 	fread(&data, realLength, 1, file); // data
 
-	printf("ctr encrypted: ");
-	printHex(data, realLength);
+	DEBUG_PRINT(("ctr encrypted: "));
+	if (DEBUG) printHex(data, realLength);
 	AES_ctr128_encrypt(data, data, realLength, &encryptKey, iv, encryptCount, &encryptNum);
-	printf("ctr decrypted: ");
-	printHex(data, realLength);
+	DEBUG_PRINT(("ctr decrypted: "));
+	if (DEBUG) printHex(data, realLength);
 
 	decrypt(data, (uint32_t) realLength);
 

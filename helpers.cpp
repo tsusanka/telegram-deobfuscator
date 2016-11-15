@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include "helpers.h"
 
+#if DEBUG
+	#define DEBUG_PRINT(a) printf a
+#else
+	#define DEBUG_PRINT(a) (void)0
+#endif
+
 void printHex(const void *buffer, size_t length)
 {
 	const unsigned char *p = (const unsigned char *) buffer;
