@@ -7,7 +7,5 @@ int main(int argc, char **argv)
 	unobfuscator->unobfuscate("/home/tomas/MEGA/Skola/diplomka/sniffs/2016-11-15/40-key.dat",
 							  "/home/tomas/MEGA/Skola/diplomka/sniffs/2016-11-15/41.dat");
 
-//	decrypt(data, (uint32_t) realLength);
-
 	return 0;
 }

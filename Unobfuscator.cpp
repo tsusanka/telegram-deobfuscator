@@ -74,5 +74,6 @@ void Unobfuscator::readData(FILE *file)
 	AES_ctr128_encrypt(data, data, realLength, &encryptKey, iv, encryptCount, &encryptNum);
 	printf("ctr decrypted: ");
 	printHex(data, realLength);
-	printAscii(data, realLength);
+
+	decrypt(data, (uint32_t) realLength);
 }
