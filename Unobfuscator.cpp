@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdexcept>
-#include <string.h>
 #include <openssl/aes.h>
 #include "decrypt.h"
 #include "Unobfuscator.h"
@@ -14,7 +13,7 @@ Unobfuscator::Unobfuscator()
 {
 }
 
-void Unobfuscator::unobfuscate(char const *fileWithKeyPath, char const *fileWithDataPath)
+void Unobfuscator::unobfuscate(std::string fileWithKeyPath, std::string fileWithDataPath)
 {
 	FILE *fileWithKey = openFile(fileWithKeyPath);
 	setKeyFromFile(fileWithKey);
@@ -46,9 +45,9 @@ void Unobfuscator::setKeyFromFile(FILE *fileWithKey)
 	AES_ctr128_encrypt(temp, temp, 64, &encryptKey, iv, encryptCount, &encryptNum); // ? check?
 }
 
-FILE *Unobfuscator::openFile(char const *filename)
+FILE *Unobfuscator::openFile(std::string filename)
 {
-	FILE *file = fopen(filename, "rb");
+	FILE *file = fopen(filename.c_str(), "rb");
 	if (!file) {
 		throw std::invalid_argument("Unable to open file");
 	}
@@ -77,3 +76,4 @@ void Unobfuscator::readData(FILE *file)
 
 	decrypt(data, (uint32_t) realLength);
 }
+// eb da

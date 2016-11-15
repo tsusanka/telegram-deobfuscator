@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <string>
+#include <string.h>
 #include <openssl/aes.h>
 
 #ifndef UNOBFUSCATOR_H
@@ -9,11 +11,12 @@ class Unobfuscator
 {
 public:
 	Unobfuscator();
-	void unobfuscate(char const *fileWithKey, char const *fileWithData);
+
+	void unobfuscate(std::string fileWithKey, std::string fileWithData);
 
 private:
 
-	FILE *openFile(char const *filename);
+	FILE *openFile(std::string filename);
 
 	void readData(FILE *file);
 
