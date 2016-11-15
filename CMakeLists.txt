@@ -4,7 +4,7 @@ project(c)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES
-        unobfuscate.cpp decrypt.cpp helpers.cpp
+        main.cpp decrypt.cpp helpers.cpp Unobfuscator.cpp
         tgnet/ApiScheme.cpp
         tgnet/BuffersStorage.cpp
         tgnet/ByteArray.cpp
