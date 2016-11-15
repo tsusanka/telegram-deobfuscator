@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdexcept>
 #include <openssl/aes.h>
+#include <vector>
 #include "decrypt.h"
 #include "Unobfuscator.h"
 #include "helpers.h"
@@ -13,14 +14,16 @@ Unobfuscator::Unobfuscator()
 {
 }
 
-void Unobfuscator::unobfuscate(std::string fileWithKeyPath, std::string fileWithDataPath)
+void Unobfuscator::unobfuscate(std::string fileKeyPath, std::vector<std::string> filesDataPath)
 {
-	FILE *fileWithKey = openFile(fileWithKeyPath);
+	FILE *fileWithKey = openFile(fileKeyPath);
 	setKeyFromFile(fileWithKey);
 	readData(fileWithKey);
 
-	FILE *file = openFile(fileWithDataPath);
-	readData(file);
+	for (int i = 0; i < filesDataPath.size(); ++i) {
+		FILE *file = openFile(filesDataPath[i]);
+		readData(file);
+	}
 }
 
 void Unobfuscator::setKeyFromFile(FILE *fileWithKey)
@@ -76,4 +79,3 @@ void Unobfuscator::readData(FILE *file)
 
 	decrypt(data, (uint32_t) realLength);
 }
-// eb da

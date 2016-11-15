@@ -12,7 +12,7 @@ class Unobfuscator
 public:
 	Unobfuscator();
 
-	void unobfuscate(std::string fileWithKey, std::string fileWithData);
+	void unobfuscate(std::string fileWithKey, std::vector<std::string> fileWithData);
 
 private:
 
