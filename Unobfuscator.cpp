@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <stdexcept>
 #include <openssl/aes.h>
-#include <vector>
 #include "decrypt.h"
 #include "Unobfuscator.h"
 #include "helpers.h"
@@ -14,16 +13,12 @@ Unobfuscator::Unobfuscator()
 {
 }
 
-void Unobfuscator::unobfuscate(std::string fileKeyPath, std::vector<std::string> filesDataPath)
+void Unobfuscator::unobfuscate(std::string path)
 {
-	FILE *fileWithKey = openFile(fileKeyPath);
-	setKeyFromFile(fileWithKey);
-	readData(fileWithKey);
+	FILE *file = openFile(path);
+	setKeyFromFile(file);
 
-	for (int i = 0; i < filesDataPath.size(); ++i) {
-		FILE *file = openFile(filesDataPath[i]);
-		readData(file);
-	}
+	while(readData(file)); // read until content
 }
 
 void Unobfuscator::setKeyFromFile(FILE *fileWithKey)
@@ -57,13 +52,16 @@ FILE *Unobfuscator::openFile(std::string filename)
 	return file;
 }
 
-void Unobfuscator::readData(FILE *file)
+bool Unobfuscator::readData(FILE *file)
 {
 	unsigned char dataLength[1];
 	unsigned char data[300];
 	uint8_t realLength;
 
-	fread(&dataLength, 1, 1, file); // length
+	size_t success = fread(&dataLength, 1, 1, file); // length
+	if (success == 0) {
+		return false;
+	}
 
 	AES_ctr128_encrypt(dataLength, dataLength, 1, &encryptKey, iv, encryptCount, &encryptNum);
 	realLength = (uint8_t) (*dataLength * 4);
@@ -78,4 +76,6 @@ void Unobfuscator::readData(FILE *file)
 	printHex(data, realLength);
 
 	decrypt(data, (uint32_t) realLength);
+
+	return true;
 }

@@ -12,13 +12,13 @@ class Unobfuscator
 public:
 	Unobfuscator();
 
-	void unobfuscate(std::string fileWithKey, std::vector<std::string> fileWithData);
+	void unobfuscate(std::string path);
 
 private:
 
 	FILE *openFile(std::string filename);
 
-	void readData(FILE *file);
+	bool readData(FILE *file);
 
 	void setKeyFromFile(FILE *fileWithKey);
 
