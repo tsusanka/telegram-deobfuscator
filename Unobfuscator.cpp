@@ -21,6 +21,8 @@ void Unobfuscator::unobfuscate(std::string outgoingPath, std::string incomingPat
 	FILE *incomingFile = openFile(incomingPath);
 
 	while(readData(outgoingFile, false)); // read until content
+	printf("\n\n---------------------- INCOMING ----------------------\n\n");
+	while(readData(incomingFile, true)); // read until content
 }
 
 void Unobfuscator::setDecryptKey(unsigned char *encKeyBytes)
@@ -111,7 +113,7 @@ bool Unobfuscator::readData(FILE *file, bool incoming)
 	DEBUG_PRINT(("ctr decrypted: "));
 	if (DEBUG) printHex(data, realLength);
 
-	decrypt(data, (uint32_t) realLength);
+	decrypt(data, (uint32_t) realLength, incoming);
 
 	return true;
 }

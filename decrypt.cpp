@@ -10,7 +10,7 @@
  * @param data
  * @param length  length of data (with authKeyId and msgKey)
  */
-void decrypt(unsigned char *data, uint32_t length)
+void decrypt(unsigned char *data, uint32_t length, bool incoming)
 {
 	uint8_t authKey[] = {
 			0x9d, 0xef, 0x54, 0x8f, 0xba, 0xe4, 0xb8, 0xd4, 0x7e, 0x99, 0xe5, 0x86, 0xd0, 0x3c, 0x58, 0xdb, 0x8c, 0x58,
@@ -32,7 +32,7 @@ void decrypt(unsigned char *data, uint32_t length)
 	DEBUG_PRINT(("ige len: %d\n", length - 24));
 
 	static uint8_t key[64];
-	Datacenter::generateMessageKey(authKey, data + 8, key, false);
+	Datacenter::generateMessageKey(authKey, data + 8, key, incoming);
 	Datacenter::aesIgeEncryption(data + 24, key, key + 32, false, false, length - 24);
 
 	DEBUG_PRINT(("ige decrypted:\n"));
