@@ -23,9 +23,18 @@ private:
 	void setKeyFromFile(FILE *fileWithKey);
 
 	AES_KEY encryptKey;
-	unsigned char iv[16];
+	AES_KEY decryptKey;
+	unsigned char encIv[16];
+	unsigned char decIv[16];
 	uint32_t encryptNum;
+	uint32_t decryptNum;
 	uint8_t encryptCount[16];
+	uint8_t decryptCount[16];
+
+	void setDecryptKey(unsigned char *encKeyBytes);
+
+	void setEncryptKey(unsigned char encKeyBytes[32]);
+
 };
 
 #endif
