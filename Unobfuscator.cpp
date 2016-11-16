@@ -13,12 +13,14 @@ Unobfuscator::Unobfuscator()
 {
 }
 
-void Unobfuscator::unobfuscate(std::string path)
+void Unobfuscator::unobfuscate(std::string outgoingPath, std::string incomingPath)
 {
-	FILE *file = openFile(path);
-	setKeyFromFile(file);
+	FILE *outgoingFile = openFile(outgoingPath);
+	setKeyFromFile(outgoingFile);
 
-	while(readData(file)); // read until content
+	FILE *incomingFile = openFile(incomingPath);
+
+	while(readData(outgoingFile, false)); // read until content
 }
 
 void Unobfuscator::setDecryptKey(unsigned char *encKeyBytes)
@@ -77,7 +79,7 @@ FILE *Unobfuscator::openFile(std::string filename)
 	return file;
 }
 
-bool Unobfuscator::readData(FILE *file)
+bool Unobfuscator::readData(FILE *file, bool incoming)
 {
 	unsigned char dataLength[1];
 	unsigned char data[300];
@@ -88,7 +90,11 @@ bool Unobfuscator::readData(FILE *file)
 		return false;
 	}
 
-	AES_ctr128_encrypt(dataLength, dataLength, 1, &encryptKey, encIv, encryptCount, &encryptNum);
+	if (incoming) {
+		AES_ctr128_encrypt(dataLength, dataLength, 1, &decryptKey, decIv, decryptCount, &decryptNum);
+	} else {
+		AES_ctr128_encrypt(dataLength, dataLength, 1, &encryptKey, encIv, encryptCount, &encryptNum);
+	}
 	realLength = (uint8_t) (*dataLength * 4);
 	DEBUG_PRINT(("data len: %d\n", realLength));
 
@@ -96,7 +102,12 @@ bool Unobfuscator::readData(FILE *file)
 
 	DEBUG_PRINT(("ctr encrypted: "));
 	if (DEBUG) printHex(data, realLength);
-	AES_ctr128_encrypt(data, data, realLength, &encryptKey, encIv, encryptCount, &encryptNum);
+
+	if (incoming) {
+		AES_ctr128_encrypt(data, data, realLength, &decryptKey, decIv, decryptCount, &decryptNum);
+	} else {
+		AES_ctr128_encrypt(data, data, realLength, &encryptKey, encIv, encryptCount, &encryptNum);
+	}
 	DEBUG_PRINT(("ctr decrypted: "));
 	if (DEBUG) printHex(data, realLength);
 
