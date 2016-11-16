@@ -1,7 +1,7 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-#define DEBUG true
+#define DEBUG false
 #if DEBUG
 	#define DEBUG_PRINT(a) printf a
 #else
