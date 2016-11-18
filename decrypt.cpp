@@ -51,10 +51,7 @@ void decrypt(unsigned char *data, uint32_t length, bool incoming)
 		printHex(data + 24 + 28, 4);
 	}
 
-	int32_t constructor = (*(data + 24 + 32) & 0xff) |
-			((*(data + 24 + 32 + 1) & 0xff) << 8) |
-			((*(data + 24 + 32 + 2) & 0xff) << 16) |
-			((*(data + 24 + 32 + 3) & 0xff) << 24);
+	int32_t constructor = readInt32(data + 24 + 32);
 	printf("Action: %s\n", TLconstructors.at((uint32_t) constructor));
 
 	printf("Content:\n");
