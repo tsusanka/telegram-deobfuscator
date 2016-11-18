@@ -84,8 +84,8 @@ FILE *Unobfuscator::openFile(std::string filename)
 bool Unobfuscator::readData(FILE *file, bool incoming)
 {
 	unsigned char dataLength[1];
-	unsigned char data[300];
-	uint8_t realLength;
+	unsigned char data[512];
+	uint32_t realLength = 0;
 
 	size_t success = fread(&dataLength, 1, 1, file); // length
 	if (success == 0) {
@@ -97,7 +97,7 @@ bool Unobfuscator::readData(FILE *file, bool incoming)
 	} else {
 		AES_ctr128_encrypt(dataLength, dataLength, 1, &encryptKey, encIv, encryptCount, &encryptNum);
 	}
-	realLength = (uint8_t) (*dataLength * 4);
+	realLength = (uint32_t) (*dataLength * 4);
 	DEBUG_PRINT(("data len: %d\n", realLength));
 
 	fread(&data, realLength, 1, file); // data
