@@ -83,37 +83,59 @@ FILE *Unobfuscator::openFile(std::string filename)
 
 bool Unobfuscator::readData(FILE *file, bool incoming)
 {
-	unsigned char dataLength[1];
-	unsigned char data[512];
-	uint32_t realLength = 0;
+	unsigned char data[10000]; // todo dynamic
+	uint32_t realLength;
 
-	size_t success = fread(&dataLength, 1, 1, file); // length
-	if (success == 0) {
+	realLength = readRealLength(file, incoming);
+	if (realLength == 0) {
 		return false;
 	}
-
-	if (incoming) {
-		AES_ctr128_encrypt(dataLength, dataLength, 1, &decryptKey, decIv, decryptCount, &decryptNum);
-	} else {
-		AES_ctr128_encrypt(dataLength, dataLength, 1, &encryptKey, encIv, encryptCount, &encryptNum);
-	}
-	realLength = (uint32_t) (*dataLength * 4);
-	DEBUG_PRINT(("data len: %d\n", realLength));
+	DEBUG_PRINT(("real len: %d\n", realLength));
 
 	fread(&data, realLength, 1, file); // data
 
 	DEBUG_PRINT(("ctr encrypted: "));
 	if (DEBUG) printHex(data, realLength);
 
-	if (incoming) {
-		AES_ctr128_encrypt(data, data, realLength, &decryptKey, decIv, decryptCount, &decryptNum);
-	} else {
-		AES_ctr128_encrypt(data, data, realLength, &encryptKey, encIv, encryptCount, &encryptNum);
-	}
+	ctrDecipher(data, data, realLength, incoming);
 	DEBUG_PRINT(("ctr decrypted: "));
 	if (DEBUG) printHex(data, realLength);
 
 	decrypt(data, (uint32_t) realLength, incoming);
 
 	return true;
+}
+
+void Unobfuscator::ctrDecipher(unsigned char *in, unsigned char *out, size_t length, bool incoming)
+{
+	if (incoming) {
+		AES_ctr128_encrypt(in, out, length, &decryptKey, decIv, decryptCount, &decryptNum);
+	} else {
+		AES_ctr128_encrypt(in, out, length, &encryptKey, encIv, encryptCount, &encryptNum);
+	}
+}
+
+uint32_t Unobfuscator::readRealLength(FILE *file, bool incoming)
+{
+	unsigned char length[4];
+
+	size_t success = fread(&length, 1, 1, file);
+	if (success == 0) {
+		return 0;
+	}
+
+	ctrDecipher(length, length, 1, incoming);
+
+	if (length[0] != 0x7f) {
+		return (uint32_t) (length[0] * 4);
+	} else {
+		unsigned char extra[3];
+		fread(&extra, 3, 1, file);
+		ctrDecipher(extra, extra, 3, incoming);
+		length[1] = extra[0];
+		length[2] = extra[1];
+		length[3] = extra[2];
+
+		return ((uint32_t) readInt32(length) >> 8) * 4;
+	}
 }

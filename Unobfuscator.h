@@ -35,6 +35,9 @@ private:
 
 	void setEncryptKey(unsigned char encKeyBytes[32]);
 
+	void ctrDecipher(unsigned char *in, unsigned char *out, size_t length, bool incoming);
+
+	uint32_t readRealLength(FILE *file, bool incoming);
 };
 
 #endif
