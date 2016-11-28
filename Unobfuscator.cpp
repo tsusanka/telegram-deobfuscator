@@ -1,3 +1,4 @@
+#include <cstring>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdexcept>
@@ -9,19 +10,18 @@
 #define KEY_LENGTH 32
 #define IV_LENGTH 16
 
-Unobfuscator::Unobfuscator()
+Unobfuscator::Unobfuscator(std::string outgoingPath, std::string incomingPath, std::string keyPath)
 {
-}
-
-void Unobfuscator::unobfuscate(std::string outgoingPath, std::string incomingPath)
-{
-	FILE *outgoingFile = openFile(outgoingPath);
+	outgoingFile = openFile(outgoingPath);
+	incomingFile = openFile(incomingPath);
 	setObfuscationKeyFromFile(outgoingFile);
 
-	FILE *incomingFile = openFile(incomingPath);
+	decryptor = keyPath == "" ? nullptr : new Decryptor(keyPath);
+}
 
-	decryptor = new Decryptor();
-
+void Unobfuscator::unobfuscate()
+{
+	printf("\n\n---------------------- OUTGOING ----------------------\n\n");
 	while (readData(outgoingFile, false)); // read until content
 	printf("\n\n---------------------- INCOMING ----------------------\n\n");
 	while (readData(incomingFile, true)); // read until content
@@ -92,18 +92,21 @@ bool Unobfuscator::readData(FILE *file, bool incoming)
 	if (realLength == 0) {
 		return false;
 	}
-	DEBUG_PRINT(("real len: %d\n", realLength));
+	printf("Length of packet: %d\n", realLength);
 
 	fread(&data, realLength, 1, file); // data
 
-	DEBUG_PRINT(("ctr encrypted: "));
-	if (DEBUG) printHex(data, realLength);
+	printf("Obfuscated (ctr encrypted):   ");
+	printHex(data, realLength);
 
 	ctrDecipher(data, data, realLength, incoming);
-	DEBUG_PRINT(("ctr decrypted: "));
-	if (DEBUG) printHex(data, realLength);
+	printf("Unobfuscated (ctr decrypted): ");
+	printHex(data, realLength);
 
-	decryptor->decrypt(data, (uint32_t) realLength, incoming);
+	if (decryptor) {
+		decryptor->decrypt(data, (uint32_t) realLength, incoming);
+	}
+	printf("\n");
 
 	return true;
 }

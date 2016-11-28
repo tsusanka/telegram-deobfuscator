@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string>
-#include <string.h>
 #include <openssl/aes.h>
 #include "Decryptor.h"
 
@@ -11,9 +10,9 @@
 class Unobfuscator
 {
 public:
-	Unobfuscator();
+	Unobfuscator(std::string outgoingPath, std::string incomingPath, std::string keyPath);
 
-	void unobfuscate(std::string outgoingPath, std::string incomingPath);
+	void unobfuscate();
 
 private:
 
@@ -31,6 +30,8 @@ private:
 	uint32_t decryptNum;
 	uint8_t encryptCount[16];
 	uint8_t decryptCount[16];
+	FILE *outgoingFile;
+	FILE *incomingFile;
 	Decryptor *decryptor;
 
 	void setDecryptKey(unsigned char *encKeyBytes);
