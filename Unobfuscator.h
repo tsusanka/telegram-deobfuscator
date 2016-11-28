@@ -3,6 +3,7 @@
 #include <string>
 #include <string.h>
 #include <openssl/aes.h>
+#include "Decryptor.h"
 
 #ifndef UNOBFUSCATOR_H
 #define UNOBFUSCATOR_H
@@ -20,7 +21,7 @@ private:
 
 	bool readData(FILE *file, bool incoming);
 
-	void setKeyFromFile(FILE *fileWithKey);
+	void setObfuscationKeyFromFile(FILE *fileWithKey);
 
 	AES_KEY encryptKey;
 	AES_KEY decryptKey;
@@ -30,6 +31,7 @@ private:
 	uint32_t decryptNum;
 	uint8_t encryptCount[16];
 	uint8_t decryptCount[16];
+	Decryptor *decryptor;
 
 	void setDecryptKey(unsigned char *encKeyBytes);
 

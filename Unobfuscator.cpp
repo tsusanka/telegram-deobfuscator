@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <stdexcept>
 #include <openssl/aes.h>
-#include "decrypt.h"
+#include "Decryptor.h"
 #include "Unobfuscator.h"
 #include "helpers.h"
 
@@ -16,13 +16,15 @@ Unobfuscator::Unobfuscator()
 void Unobfuscator::unobfuscate(std::string outgoingPath, std::string incomingPath)
 {
 	FILE *outgoingFile = openFile(outgoingPath);
-	setKeyFromFile(outgoingFile);
+	setObfuscationKeyFromFile(outgoingFile);
 
 	FILE *incomingFile = openFile(incomingPath);
 
-	while(readData(outgoingFile, false)); // read until content
+	decryptor = new Decryptor();
+
+	while (readData(outgoingFile, false)); // read until content
 	printf("\n\n---------------------- INCOMING ----------------------\n\n");
-	while(readData(incomingFile, true)); // read until content
+	while (readData(incomingFile, true)); // read until content
 }
 
 void Unobfuscator::setDecryptKey(unsigned char *encKeyBytes)
@@ -52,7 +54,7 @@ void Unobfuscator::setEncryptKey(unsigned char *encKeyBytes)
 
 }
 
-void Unobfuscator::setKeyFromFile(FILE *fileWithKey)
+void Unobfuscator::setObfuscationKeyFromFile(FILE *fileWithKey)
 {
 	unsigned char encKeyBytes[KEY_LENGTH];
 	unsigned char dummy[8];
@@ -101,7 +103,7 @@ bool Unobfuscator::readData(FILE *file, bool incoming)
 	DEBUG_PRINT(("ctr decrypted: "));
 	if (DEBUG) printHex(data, realLength);
 
-	decrypt(data, (uint32_t) realLength, incoming);
+	decryptor->decrypt(data, (uint32_t) realLength, incoming);
 
 	return true;
 }

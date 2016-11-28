@@ -38,7 +38,7 @@ Datacenter::Datacenter(uint32_t id) {
 
 Datacenter::Datacenter(NativeByteBuffer *data) {
     for (uint32_t a = 0; a < DOWNLOAD_CONNECTIONS_COUNT; a++) {
-        downloadConnections[a] = nullptr; 
+        downloadConnections[a] = nullptr;
     }
     uint32_t currentVersion = data->readUint32(nullptr);
     if (currentVersion >= 2 && currentVersion <= 5) {
