@@ -51,7 +51,6 @@ void Unobfuscator::setEncryptKey(unsigned char *encKeyBytes)
 	if (AES_set_encrypt_key(encKeyBytes, KEY_LENGTH * 8, &encryptKey) < 0) { // bits
 		throw std::invalid_argument("unable to set encryptKey");
 	}
-
 }
 
 void Unobfuscator::setObfuscationKeyFromFile(FILE *fileWithKey)
@@ -78,7 +77,7 @@ FILE *Unobfuscator::openFile(std::string filename)
 {
 	FILE *file = fopen(filename.c_str(), "rb");
 	if (!file) {
-		throw std::invalid_argument("Unable to open file");
+		throw std::invalid_argument("Unable to open file '" + filename + "'");
 	}
 	return file;
 }
@@ -102,6 +101,13 @@ bool Unobfuscator::readData(FILE *file, bool incoming)
 	ctrDecipher(data, data, realLength, incoming);
 	printf("Unobfuscated (ctr decrypted): ");
 	printHex(data, realLength);
+
+	printf("Key fingerprint (auth_key_id: ");
+	printHex(data, 8);
+	printf("Message key (msg_key): ");
+	printHex(data + 8, 16);
+	printf("Message content (IGE encrypted): ");
+	printHex(data + 24, realLength - 24);
 
 	if (decryptor) {
 		decryptor->decrypt(data, (uint32_t) realLength, incoming);

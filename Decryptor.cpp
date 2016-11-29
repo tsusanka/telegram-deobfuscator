@@ -35,34 +35,31 @@ void Decryptor::readKey(std::string keyPath)
  */
 void Decryptor::decrypt(unsigned char *data, uint32_t length, bool incoming)
 {
-	DEBUG_PRINT(("ige len: %d\n", length - 24));
-
 	static uint8_t key[64];
 	generateMessageKey(authKey, data + 8, key, incoming);
 	aesIgeEncryption(data + 24, key, key + 32, false, false, length - 24);
 
-	DEBUG_PRINT(("ige decrypted:\n"));
-	if (DEBUG) printHex(data + 24, length - 24);
+	printf("Message content (IGE decrypted): ");
+	printHex(data + 24, length - 24);
 
-	if (DEBUG) {
-		printf("\tsalt:\n");
-		printHex(data + 24, 8);
-		printf("\tsession:\n");
-		printHex(data + 24 + 8, 8);
-		printf("\tid:\n");
-		printHex(data + 24 + 16, 8);
-		printf("\tmsg_seq:\n");
-		printHex(data + 24 + 24, 4);
-		printf("\tmsg_size:\n");
-		printHex(data + 24 + 28, 4);
-	}
+	printf("\tSalt: ");
+	printHex(data + 24, 8);
+	printf("\tSession: ");
+	printHex(data + 24 + 8, 8);
+	printf("\tID: ");
+	printHex(data + 24 + 16, 8);
+	printf("\tSequence number: ");
+	printHex(data + 24 + 24, 4);
+	printf("\tLength: ");
+	printHex(data + 24 + 28, 4);
 
 	int32_t constructor = readInt32(data + 24 + 32);
-	printf("Action: %s\n", TLconstructors.at((uint32_t) constructor));
+	printf("\tConstructor: %02X %s\n", constructor, TLconstructors.at((uint32_t) constructor));
 
-	printf("Content:\n");
-	printHex(data + 24 + 32 + 4, length - 24 - 32);
-	printAscii(data + 24 + 32 + 4, length - 24 - 32);
+	printf("\tContent: ");
+	printHex(data + 24 + 32 + 4, length - 24 - 32 - 4);
+	printf("\tContent in ASCII: ");
+	printAscii(data + 24 + 32 + 4, length - 24 - 32 - 4);
 
 	printf("\n\n");
 }
