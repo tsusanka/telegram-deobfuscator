@@ -5,7 +5,7 @@
 #include <openssl/aes.h>
 #include "Decrypter.h"
 #include "Deobfuscator.h"
-#include "helpers.h"
+#include "Helpers.h"
 
 #define KEY_LENGTH 32
 #define IV_LENGTH 16
@@ -96,18 +96,18 @@ bool Deobfuscator::readData(FILE *file, bool incoming)
 	fread(&data, realLength, 1, file); // data
 
 	printf("Obfuscated (ctr encrypted):   ");
-	printHex(data, realLength);
+	Helpers::printHex(data, realLength);
 
 	ctrDecipher(data, data, realLength, incoming);
 	printf("Deobfuscated (ctr decrypted): ");
-	printHex(data, realLength);
+	Helpers::printHex(data, realLength);
 
 	printf("Key fingerprint (auth_key_id: ");
-	printHex(data, 8);
+	Helpers::printHex(data, 8);
 	printf("Message key (msg_key): ");
-	printHex(data + 8, 16);
+	Helpers::printHex(data + 8, 16);
 	printf("Message content (IGE encrypted): ");
-	printHex(data + 24, realLength - 24);
+	Helpers::printHex(data + 24, realLength - 24);
 
 	if (decrypter) {
 		decrypter->decrypt(data, (uint32_t) realLength, incoming);
@@ -147,6 +147,6 @@ uint32_t Deobfuscator::readRealLength(FILE *file, bool incoming)
 		length[2] = extra[1];
 		length[3] = extra[2];
 
-		return ((uint32_t) readInt32(length) >> 8) * 4;
+		return ((uint32_t) Helpers::readInt32(length) >> 8) * 4;
 	}
 }

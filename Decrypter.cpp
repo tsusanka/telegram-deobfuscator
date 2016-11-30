@@ -4,7 +4,7 @@
 #include <openssl/sha.h>
 #include <openssl/aes.h>
 #include "Decrypter.h"
-#include "helpers.h"
+#include "Helpers.h"
 #include "TLConstructors.h"
 
 Decrypter::Decrypter(std::string keyPath)
@@ -40,26 +40,26 @@ void Decrypter::decrypt(unsigned char *data, uint32_t length, bool incoming)
 	aesIgeEncryption(data + 24, key, key + 32, false, false, length - 24);
 
 	printf("Message content (IGE decrypted): ");
-	printHex(data + 24, length - 24);
+	Helpers::printHex(data + 24, length - 24);
 
 	printf("\tSalt: ");
-	printHex(data + 24, 8);
+	Helpers::printHex(data + 24, 8);
 	printf("\tSession: ");
-	printHex(data + 24 + 8, 8);
+	Helpers::printHex(data + 24 + 8, 8);
 	printf("\tID: ");
-	printHex(data + 24 + 16, 8);
+	Helpers::printHex(data + 24 + 16, 8);
 	printf("\tSequence number: ");
-	printHex(data + 24 + 24, 4);
+	Helpers::printHex(data + 24 + 24, 4);
 	printf("\tLength: ");
-	printHex(data + 24 + 28, 4);
+	Helpers::printHex(data + 24 + 28, 4);
 
-	int32_t constructor = readInt32(data + 24 + 32);
+	int32_t constructor = Helpers::readInt32(data + 24 + 32);
 	printf("\tConstructor: %02X %s\n", constructor, TLconstructors.at((uint32_t) constructor));
 
 	printf("\tContent: ");
-	printHex(data + 24 + 32 + 4, length - 24 - 32 - 4);
+	Helpers::printHex(data + 24 + 32 + 4, length - 24 - 32 - 4);
 	printf("\tContent in ASCII: ");
-	printAscii(data + 24 + 32 + 4, length - 24 - 32 - 4);
+	Helpers::printAscii(data + 24 + 32 + 4, length - 24 - 32 - 4);
 
 	printf("\n\n");
 }
