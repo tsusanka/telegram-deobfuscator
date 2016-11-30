@@ -19,7 +19,7 @@ Deobfuscator::Deobfuscator(std::string outgoingPath, std::string incomingPath, s
 	decrypter = keyPath == "" ? nullptr : new Decrypter(keyPath);
 }
 
-void Deobfuscator::deobfuscate()
+void Deobfuscator::run()
 {
 	printf("\n\n---------------------- OUTGOING ----------------------\n\n");
 	while (readData(outgoingFile, false)); // read until content
@@ -110,7 +110,7 @@ bool Deobfuscator::readData(FILE *file, bool incoming)
 	Helpers::printHex(data + 24, realLength - 24);
 
 	if (decrypter) {
-		decrypter->decrypt(data, (uint32_t) realLength, incoming);
+		decrypter->run(data, (uint32_t) realLength, incoming);
 	}
 	printf("\n");
 

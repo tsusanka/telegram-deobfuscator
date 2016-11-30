@@ -9,7 +9,7 @@ class Decrypter
 public:
 	Decrypter(std::string keyPath);
 
-	void decrypt(unsigned char *data, uint32_t length, bool incoming);
+	void run(unsigned char *data, uint32_t length, bool incoming);
 
 private:
 

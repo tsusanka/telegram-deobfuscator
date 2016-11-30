@@ -33,7 +33,7 @@ void Decrypter::readKey(std::string keyPath)
  * @param data
  * @param length  length of data (with authKeyId and msgKey)
  */
-void Decrypter::decrypt(unsigned char *data, uint32_t length, bool incoming)
+void Decrypter::run(unsigned char *data, uint32_t length, bool incoming)
 {
 	static uint8_t key[64];
 	generateMessageKey(authKey, data + 8, key, incoming);

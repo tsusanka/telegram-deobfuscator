@@ -12,7 +12,7 @@ class Deobfuscator
 public:
 	Deobfuscator(std::string outgoingPath, std::string incomingPath, std::string keyPath);
 
-	void deobfuscate();
+	void run();
 
 private:
 

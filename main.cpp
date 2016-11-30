@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 			"/home/tomas/MEGA/Skola/diplomka/sniffs/key.dat"
 	);
 
-	deobfuscator->deobfuscate();
+	deobfuscator->run();
 
 	return 0;
 }
