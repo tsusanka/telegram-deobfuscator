@@ -3,16 +3,16 @@
 #include <string.h>
 #include <openssl/sha.h>
 #include <openssl/aes.h>
-#include "Decryptor.h"
+#include "Decrypter.h"
 #include "helpers.h"
 #include "TLConstructors.h"
 
-Decryptor::Decryptor(std::string keyPath)
+Decrypter::Decrypter(std::string keyPath)
 {
 	readKey(keyPath);
 }
 
-void Decryptor::readKey(std::string keyPath)
+void Decrypter::readKey(std::string keyPath)
 {
 	FILE *file = fopen(keyPath.c_str(), "rb");
 	if (!file) {
@@ -33,7 +33,7 @@ void Decryptor::readKey(std::string keyPath)
  * @param data
  * @param length  length of data (with authKeyId and msgKey)
  */
-void Decryptor::decrypt(unsigned char *data, uint32_t length, bool incoming)
+void Decrypter::decrypt(unsigned char *data, uint32_t length, bool incoming)
 {
 	static uint8_t key[64];
 	generateMessageKey(authKey, data + 8, key, incoming);
@@ -64,7 +64,7 @@ void Decryptor::decrypt(unsigned char *data, uint32_t length, bool incoming)
 	printf("\n\n");
 }
 
-void Decryptor::generateMessageKey(uint8_t *authKey, uint8_t *messageKey, uint8_t *result, bool incoming)
+void Decrypter::generateMessageKey(uint8_t *authKey, uint8_t *messageKey, uint8_t *result, bool incoming)
 {
 	uint32_t x = incoming ? 8 : 0;
 
@@ -95,7 +95,7 @@ void Decryptor::generateMessageKey(uint8_t *authKey, uint8_t *messageKey, uint8_
 	memcpy(result + 32 + 12 + 8 + 4, sha, 8);
 }
 
-void Decryptor::aesIgeEncryption(uint8_t *buffer, uint8_t *key, uint8_t *iv, bool encrypt, bool changeIv, uint32_t length)
+void Decrypter::aesIgeEncryption(uint8_t *buffer, uint8_t *key, uint8_t *iv, bool encrypt, bool changeIv, uint32_t length)
 {
 	uint8_t *ivBytes = iv;
 	if (!changeIv) {

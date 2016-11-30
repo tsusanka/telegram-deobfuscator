@@ -2,17 +2,17 @@
 #include <stdint.h>
 #include <string>
 #include <openssl/aes.h>
-#include "Decryptor.h"
+#include "Decrypter.h"
 
-#ifndef UNOBFUSCATOR_H
-#define UNOBFUSCATOR_H
+#ifndef DEOBFUSCATOR_H
+#define DEOBFUSCATOR_H
 
-class Unobfuscator
+class Deobfuscator
 {
 public:
-	Unobfuscator(std::string outgoingPath, std::string incomingPath, std::string keyPath);
+	Deobfuscator(std::string outgoingPath, std::string incomingPath, std::string keyPath);
 
-	void unobfuscate();
+	void deobfuscate();
 
 private:
 
@@ -32,7 +32,7 @@ private:
 	uint8_t decryptCount[16];
 	FILE *outgoingFile;
 	FILE *incomingFile;
-	Decryptor *decryptor;
+	Decrypter *decrypter;
 
 	void setDecryptKey(unsigned char *encKeyBytes);
 

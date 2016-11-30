@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <string>
 
-#ifndef DECRYPTOR_H
-#define DECRYPTOR_H
+#ifndef DECRYPTER_H
+#define DECRYPTER_H
 
-class Decryptor
+class Decrypter
 {
 public:
-	Decryptor(std::string keyPath);
+	Decrypter(std::string keyPath);
 
 	void decrypt(unsigned char *data, uint32_t length, bool incoming);
 

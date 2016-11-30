@@ -1,14 +1,14 @@
-#include "Unobfuscator.h"
+#include "Deobfuscator.h"
 
 int main(int argc, char **argv)
 {
-	Unobfuscator *unobfuscator = new Unobfuscator(
+	Deobfuscator *deobfuscator = new Deobfuscator(
 			"/home/tomas/MEGA/Skola/diplomka/sniffs/2016-11-18/all-outgoing.dat",
 			"/home/tomas/MEGA/Skola/diplomka/sniffs/2016-11-18/all-incoming.dat",
 			"/home/tomas/MEGA/Skola/diplomka/sniffs/key.dat"
 	);
 
-	unobfuscator->unobfuscate();
+	deobfuscator->deobfuscate();
 
 	return 0;
 }

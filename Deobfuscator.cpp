@@ -3,23 +3,23 @@
 #include <stdint.h>
 #include <stdexcept>
 #include <openssl/aes.h>
-#include "Decryptor.h"
-#include "Unobfuscator.h"
+#include "Decrypter.h"
+#include "Deobfuscator.h"
 #include "helpers.h"
 
 #define KEY_LENGTH 32
 #define IV_LENGTH 16
 
-Unobfuscator::Unobfuscator(std::string outgoingPath, std::string incomingPath, std::string keyPath)
+Deobfuscator::Deobfuscator(std::string outgoingPath, std::string incomingPath, std::string keyPath)
 {
 	outgoingFile = openFile(outgoingPath);
 	incomingFile = openFile(incomingPath);
 	setObfuscationKeyFromFile(outgoingFile);
 
-	decryptor = keyPath == "" ? nullptr : new Decryptor(keyPath);
+	decrypter = keyPath == "" ? nullptr : new Decrypter(keyPath);
 }
 
-void Unobfuscator::unobfuscate()
+void Deobfuscator::deobfuscate()
 {
 	printf("\n\n---------------------- OUTGOING ----------------------\n\n");
 	while (readData(outgoingFile, false)); // read until content
@@ -27,7 +27,7 @@ void Unobfuscator::unobfuscate()
 	while (readData(incomingFile, true)); // read until content
 }
 
-void Unobfuscator::setDecryptKey(unsigned char *encKeyBytes)
+void Deobfuscator::setDecryptKey(unsigned char *encKeyBytes)
 {
 	unsigned char decKeyBytes[KEY_LENGTH];
 
@@ -46,14 +46,14 @@ void Unobfuscator::setDecryptKey(unsigned char *encKeyBytes)
 	}
 }
 
-void Unobfuscator::setEncryptKey(unsigned char *encKeyBytes)
+void Deobfuscator::setEncryptKey(unsigned char *encKeyBytes)
 {
 	if (AES_set_encrypt_key(encKeyBytes, KEY_LENGTH * 8, &encryptKey) < 0) { // bits
 		throw std::invalid_argument("unable to set encryptKey");
 	}
 }
 
-void Unobfuscator::setObfuscationKeyFromFile(FILE *fileWithKey)
+void Deobfuscator::setObfuscationKeyFromFile(FILE *fileWithKey)
 {
 	unsigned char encKeyBytes[KEY_LENGTH];
 	unsigned char dummy[8];
@@ -73,7 +73,7 @@ void Unobfuscator::setObfuscationKeyFromFile(FILE *fileWithKey)
 	AES_ctr128_encrypt(temp, temp, 64, &encryptKey, encIv, encryptCount, &encryptNum); // ? check?
 }
 
-FILE *Unobfuscator::openFile(std::string filename)
+FILE *Deobfuscator::openFile(std::string filename)
 {
 	FILE *file = fopen(filename.c_str(), "rb");
 	if (!file) {
@@ -82,7 +82,7 @@ FILE *Unobfuscator::openFile(std::string filename)
 	return file;
 }
 
-bool Unobfuscator::readData(FILE *file, bool incoming)
+bool Deobfuscator::readData(FILE *file, bool incoming)
 {
 	unsigned char data[10000]; // todo dynamic
 	uint32_t realLength;
@@ -99,7 +99,7 @@ bool Unobfuscator::readData(FILE *file, bool incoming)
 	printHex(data, realLength);
 
 	ctrDecipher(data, data, realLength, incoming);
-	printf("Unobfuscated (ctr decrypted): ");
+	printf("Deobfuscated (ctr decrypted): ");
 	printHex(data, realLength);
 
 	printf("Key fingerprint (auth_key_id: ");
@@ -109,15 +109,15 @@ bool Unobfuscator::readData(FILE *file, bool incoming)
 	printf("Message content (IGE encrypted): ");
 	printHex(data + 24, realLength - 24);
 
-	if (decryptor) {
-		decryptor->decrypt(data, (uint32_t) realLength, incoming);
+	if (decrypter) {
+		decrypter->decrypt(data, (uint32_t) realLength, incoming);
 	}
 	printf("\n");
 
 	return true;
 }
 
-void Unobfuscator::ctrDecipher(unsigned char *in, unsigned char *out, size_t length, bool incoming)
+void Deobfuscator::ctrDecipher(unsigned char *in, unsigned char *out, size_t length, bool incoming)
 {
 	if (incoming) {
 		AES_ctr128_encrypt(in, out, length, &decryptKey, decIv, decryptCount, &decryptNum);
@@ -126,7 +126,7 @@ void Unobfuscator::ctrDecipher(unsigned char *in, unsigned char *out, size_t len
 	}
 }
 
-uint32_t Unobfuscator::readRealLength(FILE *file, bool incoming)
+uint32_t Deobfuscator::readRealLength(FILE *file, bool incoming)
 {
 	unsigned char length[4];
 
