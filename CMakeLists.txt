@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
-project(c)
+project(deobfuscator)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -10,4 +10,4 @@ set(SOURCE_FILES
 
 link_libraries(crypto pthread z)
 
-add_executable(c ${SOURCE_FILES})
+add_executable(deobfuscator ${SOURCE_FILES})
