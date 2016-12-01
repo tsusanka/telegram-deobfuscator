@@ -1,6 +1,8 @@
 
 # Telegram Deobfuscator
 
+A small script to deobfuscate data sent from and to the official [Telegram Android app](https://github.com/DrKLO/Telegram). 
+
 ## Build
 
 - `cd` into the folder
